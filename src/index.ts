@@ -147,13 +147,15 @@ async function main() {
     `Phantom Associated Token Account: https://explorer.solana.com/address/${phantomAccount.address}?cluster=devnet`
   );
 
-  // generate a new Keypair for the delegate
+  // generate a new Keypair for the new mint authority
   const newMintAuthority = web3.Keypair.generate();
   await connection.requestAirdrop(
     newMintAuthority.publicKey,
     web3.LAMPORTS_PER_SOL * 1
   );
 
+  // set new mint authority
+  // returns "TransactionSignature"
   const setMintAuthority = await setAuthority(
     connection, // connection to Solana cluster
     user, // payer
@@ -167,6 +169,8 @@ async function main() {
     `setAuthority Transaction: https://explorer.solana.com/tx/${setMintAuthority}?cluster=devnet`
   );
 
+  // mint tokens with new mint authority
+  // returns "TransactionSignature"
   const mintWithNewAuthority = await mintTo(
     connection, // connection to Solana cluster
     newMintAuthority, //
