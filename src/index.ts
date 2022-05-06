@@ -72,11 +72,6 @@ async function main() {
     `User Associated Token Account: https://explorer.solana.com/address/${Account.address}?cluster=devnet`
   );
 
-  // put a test wallet address from Phantom wallet here
-  const phantomAddress = new web3.PublicKey(
-    "4B65V1ySBG35UbStDTUDvBTXRfxh6v5tRbLnVrVLpYD2"
-  );
-
   // generate a new Keypair for the delegate
   const delegate = web3.Keypair.generate();
   await connection.requestAirdrop(
@@ -99,8 +94,13 @@ async function main() {
     `Delegate Approve Transaction: https://explorer.solana.com/tx/${delegateApprove}?cluster=devnet`
   );
 
+  // put a test wallet address from Phantom wallet here
+  const phantomAddress = new web3.PublicKey(
+    "4B65V1ySBG35UbStDTUDvBTXRfxh6v5tRbLnVrVLpYD2"
+  );
+
   // create new Associated Token Account for receiver
-  const receiverAssociatedTokenAccount = await createAssociatedTokenAccount(
+  const phantomAssociatedTokenAccount = await createAssociatedTokenAccount(
     connection, //connection to Solana cluster
     user, // payer
     mint, // token mint
@@ -113,7 +113,7 @@ async function main() {
     connection, // connection to Solana cluster
     delegate, // payer
     associatedTokenAccount, // Token Account send Tokens
-    receiverAssociatedTokenAccount, // Token Account receive Tokens
+    phantomAssociatedTokenAccount, // Token Account receive Tokens
     delegate.publicKey, // use delegate as owner user's Token Account in tranfer
     2500 // amount of Tokens to send
   );
@@ -133,18 +133,18 @@ async function main() {
   );
 
   // check tokens tranferred to receiver
-  const receiverAccount = await getAccount(
+  const phantomAccount = await getAccount(
     connection,
-    receiverAssociatedTokenAccount
+    phantomAssociatedTokenAccount
   );
 
   console.log(
-    "Receiver Associated Token Account Balance:",
-    Number(receiverAccount.amount)
+    "Phantom Associated Token Account Balance:",
+    Number(phantomAccount.amount)
   );
 
   console.log(
-    `Receiver Associated Token Account: https://explorer.solana.com/address/${receiverAccount.address}?cluster=devnet`
+    `Phantom Associated Token Account: https://explorer.solana.com/address/${phantomAccount.address}?cluster=devnet`
   );
 
   // generate a new Keypair for the delegate
@@ -170,10 +170,10 @@ async function main() {
   const mintWithNewAuthority = await mintTo(
     connection, // connection to Solana cluster
     newMintAuthority, //
-    mint,
-    receiverAssociatedTokenAccount,
-    newMintAuthority,
-    10000
+    mint, // mint
+    phantomAssociatedTokenAccount, // mint tokens to this token account
+    newMintAuthority, // mint authority
+    10000 // amount tokens to mint
   );
 
   console.log(
